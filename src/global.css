@@ -1,0 +1,42 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  width: 100%;
+}
+
+:root {
+    /* Primary colors */
+    --primary-blue: #1877f2;
+    --primary-blue-hover: #166fe5;
+    --primary-background: #ffffff;
+  
+    /* Text colors */
+    --text-primary: #1c1e21;
+    --text-secondary: #65676b;
+  
+    /* Button colors */
+    --button-primary: #1877f2;
+    --button-primary-hover: #166fe5;
+    --button-secondary: #42b72a;
+    --button-secondary-hover: #36a420;
+  
+    /* Social button colors */
+    --google-blue: #4285F4;
+    --facebook-blue: #1877f2;
+    --twitter-blue: #1DA1F2;
+  
+    /* Border colors */
+    --border-color: #dddfe2;
+  
+    /* White and black */
+    --white: #ffffff;
+    --black: #000000;
+    
+    font-family: 'Roboto', sans-serif;
+  }
+

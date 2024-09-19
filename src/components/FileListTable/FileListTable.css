@@ -1,0 +1,16 @@
+.file-list-container h2 {
+  text-align: left;
+  margin-left: 1rem;
+  margin-bottom: 20px;
+}
+
+.file-list-button-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 20px;
+  margin-right: 30px;
+}
+  
+
+
+  

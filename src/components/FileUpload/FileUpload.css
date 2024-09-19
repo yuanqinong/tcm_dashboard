@@ -1,0 +1,102 @@
+@import '../../global.css';
+
+
+.file-upload {
+  width: 100%;
+  max-width: 2000px; /* Adjust this to your preferred width */
+  margin: 0;
+  padding: 20px;
+}
+
+.file-upload h2 {
+  text-align: left;
+  margin-bottom: 20px;
+}
+
+.file-upload-container {
+  width: 100%;
+  position: relative;
+  padding-bottom: 60px; /* Adjust this value to create space for the buttons */
+}
+
+.dropzone-container {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.button-container {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  padding: 10px;
+}
+
+.file-list-container {
+  width: 100%;
+  margin-top: 20px;
+}
+
+.file-list {
+  width: 100%;
+  max-height: 300px;
+  overflow-y: auto;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background-color: var(--white);
+}
+
+.file-list-container h3 {
+  font-size: 1.25rem;
+  color: var(--text-primary);
+  margin-bottom: 10px;
+}
+
+.dropzone {
+  border: 2px dashed var(--border-color);
+  border-radius: 4px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  text-align: center;
+  cursor: pointer;
+  background-color: var(--white);
+  width: 100%;
+}
+
+.upload-icon {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.file-icon {
+  display: inline-block;
+  width: 3rem;
+  height: 3rem;
+  line-height: 3rem;
+  text-align: center;
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+.pdf-icon {
+  background-color: #f40f02;
+  color: white;
+}
+
+
+.browse-text {
+  color: var(--primary-blue);
+  text-decoration: underline;
+  display: block;
+  text-align: center;
+}
+
+.file-types {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-top: 1rem;
+}
