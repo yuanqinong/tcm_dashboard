@@ -1,1 +1,72 @@
-<mxfile host="app.diagrams.net" modified="2024-09-16T09:30:51.242Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36" etag="vFfGWF1yQvBiLkZOzhi3" version="20.8.16" type="device" pages="2"><diagram name="Admin Dashboard" id="UTOSRWLYTMXPC3gkwK7h">7VlNc9MwEP01mYEDjL+dHJuktJQWymQ60BOj2qojKnuNIjcJv56VLdtx3RQXUpwOPUVarRTt2/fWG2dgT+LVkSDp/AxCygeWEa4G9nRgWabnO/ihLOvC4tvDwhAJFmqn2jBjP6k2GtqasZAuGo4SgEuWNo0BJAkNZMNGhIBl0+0aePNbUxLRlmEWEN62fmGhnBfWoeXX9mPKonn5zaY3KlZiUjrrSBZzEsJyw2QfDuyJAJDFKF5NKFfglbgU+95tWa0uJmgiu2ywPq2v6Ojk4hNzx9+i4clhcHT8xrSLY24Jz3TE+rZyXUIgIEtCqk4xB/Z4OWeSzlISqNUlJh1tcxlzvayPo0LS1daLmlX4yBsKMZVijS56g12CqyljOxrBZZ0AtBa2+Sb4I+1IdNKj6uwaFxxoaB4BU5XDGhUaIk/0FIScQwQJ4Ye1dVzjZuCs9jkFSDVa36mUa016kkloYklXTH5V29+6ena5sTJd6ZPzybqcJBjvxiY1vdxcq7fls3JfEZ8K6uGsIQaQiYA+xCktUyIiKh8C9X4WCMqJZLfNe+w8o2aL9zO8sGynmXMsNfTfEN8fYtI2qe+2mW+WXNxk/vCpiD/a//LgeveVB68NUvVM2T2ZRi/loXN5sDqWB7vP8mC1ywOLErRcpOpgyziFiCUPaMH4N1oohb8u+62OBcN7Mik4z0UKO6S03ZHSTp+Ubnd6E0ikitUyzkiCjazA0bnqh/eN1lb/tHafC633oMI7HeXg9ikHpyWHi5QDCdE2hSCLMerFwPI4BjC+QmV4kRq9WmRpipmkyi/O1O9QTDX+vCWSVNAsXu+dguz+FeS9KKizgtyOCvL6VJC7RUG5NsJaQ8i5/LArmqcfRO6guifjI8w+nyrFIXjGqzNIIpiO9089TtffYU+nHv/Zq6eebtFPPjungiFk2IvsXFReR1GN/lJU+dYDIch6wyEFlouhOvlcGWrKOU6Tcp5/523e4/xxUNygplwVyp+z0Gu3kJwFNwMlBe9Hpt5kjt8j5VYsiWqLkn4mJSjBI8Pyd7VKnneqRL5E4ysahvn2PasB7tDtuQb4LfRnqpg2USvq6i0NcEkX1j0DsmRqj8XUaCE5zhjXAH5IYMnzgoO8JQv1cZ1jeUQVtAfvW4giNrIJ20IKuKET4KDqWAKJKsfX+Bi8YyJcvVWwpwFiqUreWCHNAsIP9ELMwpBve/vYzOQOUuXeTZXZTpV3T6bsJ8vUsJWpc0ExoCJVRdf9v2TDsXrORvWk7aUJKcdFM+GXHclvuhDzcT3IDtsNv2O74f9lu7ElpTit/1ssGoD6H1r78Bc=</diagram><diagram id="LoVpvTUCqFkAHhGe5Po7" name="Chatbot">ddHNEoIgEADgp+Gu0KidzfLSyUNnRjZhBl0HabSePh0wY6wTy7cLyw9heTtdDO/lFQVoQiMxEXYilMZJepiHRZ5OUpY5aIwSvmiDSr3AY+T1oQQMQaFF1Fb1IdbYdVDbwLgxOIZld9Rh1543sIOq5nqvNyWsdJrRdPMSVCPXznFydJmWr8X+JoPkAscvYgVhuUG0LmqnHPTyeOu7uHXnP9nPwQx09seCOdj2nifBD7HiDQ==</diagram></mxfile>
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36" version="24.7.14">
+  <diagram name="Admin Dashboard" id="UTOSRWLYTMXPC3gkwK7h">
+    <mxGraphModel dx="1674" dy="772" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="2Oybe9JUOi5B_g8JEcGH-13" value="" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="327" y="340" width="223" height="190" as="geometry" />
+        </mxCell>
+        <mxCell id="2Oybe9JUOi5B_g8JEcGH-20" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="2Oybe9JUOi5B_g8JEcGH-1" target="2Oybe9JUOi5B_g8JEcGH-2" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="2Oybe9JUOi5B_g8JEcGH-1" value="Start" style="ellipse;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="378.5" y="50" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="2Oybe9JUOi5B_g8JEcGH-9" value="" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="327" y="560" width="226" height="210" as="geometry" />
+        </mxCell>
+        <mxCell id="2Oybe9JUOi5B_g8JEcGH-19" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="2Oybe9JUOi5B_g8JEcGH-2" target="2Oybe9JUOi5B_g8JEcGH-3" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="2Oybe9JUOi5B_g8JEcGH-2" value="Sign Up/ Login" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="380" y="160" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="2Oybe9JUOi5B_g8JEcGH-14" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="1" source="2Oybe9JUOi5B_g8JEcGH-3" target="2Oybe9JUOi5B_g8JEcGH-4" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="2Oybe9JUOi5B_g8JEcGH-3" value="Content Manager Page" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="380" y="260" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="2Oybe9JUOi5B_g8JEcGH-15" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="2Oybe9JUOi5B_g8JEcGH-4" target="2Oybe9JUOi5B_g8JEcGH-5" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="2Oybe9JUOi5B_g8JEcGH-4" value="Upload Documents&lt;br&gt;(supported multiple data sources)" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="380" y="360" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="2Oybe9JUOi5B_g8JEcGH-16" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="2Oybe9JUOi5B_g8JEcGH-5" target="2Oybe9JUOi5B_g8JEcGH-6" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="2Oybe9JUOi5B_g8JEcGH-5" value="Uploaded documents will be stored in NoSQL DB (MongoDB)" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="380" y="450" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="2Oybe9JUOi5B_g8JEcGH-17" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="2Oybe9JUOi5B_g8JEcGH-6" target="2Oybe9JUOi5B_g8JEcGH-9" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="440" y="670" />
+              <mxPoint x="440" y="670" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="2Oybe9JUOi5B_g8JEcGH-6" value="Click &quot;Indexing&quot; button to convert documents to embedding" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="380" y="585" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="2Oybe9JUOi5B_g8JEcGH-7" value="Store embedding in vector DB" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="380" y="670" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="2Oybe9JUOi5B_g8JEcGH-10" value="Building Knowledge base for Gen AI" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="580" y="610" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="2Oybe9JUOi5B_g8JEcGH-18" value="Preparing data" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="580" y="420" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="2Oybe9JUOi5B_g8JEcGH-21" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.75;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="2Oybe9JUOi5B_g8JEcGH-7" target="2Oybe9JUOi5B_g8JEcGH-7" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Rv-kHg3yCOE8T_JTYGO7-1" value="&lt;b&gt;To prevent running out of local storage and processing time, frontend will implement a restriction allowing a max of 10 unprocessed documents in MongoDB&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="70" y="420" width="210" height="30" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

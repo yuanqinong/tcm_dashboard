@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Snackbar, Alert as MuiAlert } from '@mui/material';
 
-const Alert = ({ message, severity, duration = 3000, onClose }) => {
+const Alert = ({ message, severity, duration = 5000 }) => {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -15,9 +15,6 @@ const Alert = ({ message, severity, duration = 3000, onClose }) => {
       return;
     }
     setOpen(false);
-    if (onClose) {
-      onClose();
-    }
   };
 
   return (
@@ -32,7 +29,6 @@ const Alert = ({ message, severity, duration = 3000, onClose }) => {
       }}
     >
       <MuiAlert 
-        onClose={handleClose} 
         severity={severity} 
         sx={{ width: '100%', marginTop: '50px' }} 
         elevation={6} 

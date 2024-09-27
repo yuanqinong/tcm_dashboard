@@ -3,18 +3,28 @@ import {
   getUploadedFiles,
   deleteFiles,
   downloadFiles,
+  syncKnowledgeBase,
+  deleteSelectedEmbedding
 } from "../../Redux/actions/ContentManagerAction";
 import { DataGrid } from "@mui/x-data-grid";
 import { Paper, Button, Stack } from "@mui/material";
+import LoadingButton from '@mui/lab/LoadingButton';
 import useAlert from "../AlertComponent/useAlert";
 import Alert from "../AlertComponent/alert";
+import CloudDoneIcon from '@mui/icons-material/CloudDone';
+import CloudOffIcon from '@mui/icons-material/CloudOff';
+import DownloadIcon from '@mui/icons-material/Download';
+import Typography from '@mui/material/Typography';
+import IconButton from '@mui/material/IconButton';
 import "./FileListTable.css";
 
 function FileList({ refreshTrigger }) {
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [processedData, setProcessedData] = useState([]);
   const [selectedFiles, setSelectedFiles] = useState([]);
-  const { alertState, showAlert, clearAlert } = useAlert();
+  const [syncStatus, setSyncStatus] = useState(false);
+  const [deleteStatus, setDeleteStatus] = useState(false);
+  const { alertState, showAlert} = useAlert();
 
   useEffect(() => {
     fetchUploadedFiles();
@@ -39,19 +49,23 @@ function FileList({ refreshTrigger }) {
     return data.map((item) => ({
       id: item.file_id,
       filename: item.filename,
-      uploadDate: new Date(item.upload_date).toLocaleString(),
+      uploadDate: new Date(new Date(item.upload_date).getTime() + 8 * 60 * 60 * 1000).toLocaleString('en-US', { timeZone: 'Asia/Singapore' }),
+      sync: item.Synced,
     }));
   };
 
   const handleDelete = async (fileIds) => {
     try {
-      const result = await deleteFiles(fileIds);
-      showAlert(result.message, "success");
+      setDeleteStatus(true);
+      const delete_file_result = await deleteFiles(fileIds);
+      const delete_embedding_result = await deleteSelectedEmbedding(fileIds);
+      showAlert(delete_file_result.message, "success");
       fetchUploadedFiles(); // Refresh the list after deletion
     } catch (error) {
       console.error("Failed to delete files:", error);
       showAlert("Failed to delete files", "error");
     }
+    setDeleteStatus(false);
   };
 
   const handleDownload = async (fileId, filename) => {
@@ -92,67 +106,101 @@ function FileList({ refreshTrigger }) {
       headerName: "Action",
       width: 200,
       renderCell: (params) => (
-        <Stack direction="row" spacing={1}>
-          <Button
-            variant="text"
-            onClick={() => handleDownload(params.row.id, params.row.filename)}
-          >
-            Download
-          </Button>
-          <Button
-            variant="text"
-            onClick={() => handleDelete([params.row.id])}
-            sx={{ color: "red" }}
-          >
-            Delete
-          </Button>
+        <Stack direction="row" spacing={1} marginTop={1}>
+          <IconButton color="action" onClick={() => handleDownload(params.row.id, params.row.filename)}>
+            <DownloadIcon color="action"/>
+          </IconButton>
         </Stack>
       ),
     },
+    { field: "status", headerName: "Status", width: 200, renderCell: (params) => (
+      params.row.sync ? (
+        <Stack direction="row" spacing={1} marginTop={1.5}>
+          <CloudDoneIcon color="success" />
+          <Typography>Synced</Typography>
+        </Stack>
+        
+      ) : (
+        <Stack direction="row" spacing={1} marginTop={1.5}>
+          <CloudOffIcon color="disabled" />
+          <Typography>Not Synced</Typography>
+        </Stack>
+      )
+    )},
   ];
 
-  const handleSelectionChange = (newSelection) => {
-    setSelectedFiles(newSelection);
+  const handleSync = async () => {
+    try {
+      setSyncStatus(true);
+      const response = await syncKnowledgeBase();
+      if (response.status === 200) {
+
+        showAlert(response.data.message, "success");
+      } else {
+        showAlert(response.data.error, "error");
+      }
+    } catch (error) {
+      showAlert("Failed to sync knowledge base", "error");
+    }
+    setSyncStatus(false);
+    fetchUploadedFiles();
   };
 
   return (
     <div className="file-list-container">
       <h2>Knowledge Base</h2>
-      <div className="file-list-button-container">
-        <Stack direction="row" spacing={2}>
-          <Button
-            variant="contained"
-          onClick={() => {}}
-          sx={{ marginBottom: 2 }}
-        >
-            Sync Database
-          </Button>
-          <Button
-            variant="outlined"
-          onClick={() => {}}
-          sx={{ marginBottom: 2 }}
-        >
-            Check Sync Status
-          </Button>
-        </Stack>
+      <Stack direction="row" sx={{justifyContent: "space-between", marginLeft: 2}}>
+        <div className="file-list-delete-button-container">
+            {selectedFiles.length > 0 && (
+              <LoadingButton
+                variant="outlined"
+                color="error"
+                onClick={() => handleDelete(selectedFiles)}
+                loading={deleteStatus}
+                loadingIndicator="Deleting..."
+              >
+                Delete Selected Files
+              </LoadingButton>
+            )}
+        </div>
+        <div className="file-list-button-container">
+          <Stack direction="row" spacing={2}>
+            <LoadingButton
+              variant="contained"
+              onClick={handleSync}
+              loading={syncStatus}
+              loadingIndicator="Syncing..."
+            >
+              Sync Knowledge Base
+            </LoadingButton>
+            <Button
+              variant="outlined"
+            onClick={() => {}}
+            disabled
+          >
+              Check Sync Status
+            </Button>
+          </Stack>
+        </div>
+      </Stack>
+      <div className="file-list-table-container">
+        <Paper sx={{ height: 400, width: "100%" }}>
+          <DataGrid
+            rows={processedData}
+            columns={columns}
+            checkboxSelection
+            onRowSelectionModelChange={(newRowSelectionModel) => {
+              setSelectedFiles(newRowSelectionModel);
+            }}
+            rowSelectionModel={selectedFiles}
+            sx={{ border: 0 }}
+          />
+        </Paper>
       </div>
-      <Paper sx={{ height: 400, width: "100%" }}>
-        <DataGrid
-          rows={processedData}
-          columns={columns}
-          pageSize={5}
-          rowsPerPageOptions={[5, 10, 20]}
-          checkboxSelection
-          onSelectionModelChange={handleSelectionChange}
-          disableSelectionOnClick
-          sx={{ border: 0 }}
-        />
-      </Paper>
       <Alert
         message={alertState.message}
         severity={alertState.severity}
         duration={5000}
-        onClose={clearAlert}
       />
     </div>
   );

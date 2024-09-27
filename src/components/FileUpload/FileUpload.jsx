@@ -20,10 +20,6 @@ function FileUpload({ onUploadComplete }) {
   const [uploading, setUploading] = useState(false);
   const { alertState, showAlert, clearAlert } = useAlert();
 
-  const handleAddFiles = (newFiles) => {
-    setFiles((prevFiles) => [...prevFiles, ...newFiles]);
-  };
-
   const onDrop = useCallback((acceptedFiles) => {
     setFiles((prevFiles) => [...prevFiles, ...acceptedFiles]);
   }, []);
@@ -148,7 +144,8 @@ function FileUpload({ onUploadComplete }) {
       <Alert
         message={alertState.message}
         severity={alertState.severity}
-        duration={5000}
+        duration={3000}
+        onClose={clearAlert}
       />
     </div>
   );

@@ -4,7 +4,6 @@ const API_BASE_URL = 'http://localhost:8000'; // Replace with your actual API ba
 
 const api = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
   }
@@ -52,7 +51,7 @@ export const downloadFiles = async (fileIds) => {
 
 export const deleteFiles = async (fileIds) => {
   try {
-    const response = await api.delete('/delete_file/', { 
+    const response = await api.delete('/delete_file', { 
       data: fileIds  
     });
     return response.data;
@@ -61,3 +60,25 @@ export const deleteFiles = async (fileIds) => {
     throw error;
   }
 };
+
+export const syncKnowledgeBase = async () => {
+  try {
+    const response = await api.post('/sync_knowledge_base');
+    return response;
+  } catch (error) {
+    console.error('Failed to sync database:', error);
+    throw error;
+  }
+};
+
+export const deleteSelectedEmbedding = async (fileIds) => {
+  try {
+    const response = await api.delete('/delete_embeddings', { 
+      data: fileIds  
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Failed to delete embeddings:', error);
+    throw error;
+  }
+}
