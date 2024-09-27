@@ -39,10 +39,13 @@ export const getUploadedFiles = async () => {
 
 export const downloadFiles = async (fileIds) => {
   try {
-    const response = await api.get(`/download_file/${fileIds}`, {
+    const response = await api.post(`/download_files`, fileIds, {
       responseType: 'blob'
     });
-    return response;
+    console.log("header",response.headers);
+    const contentDisposition = response.headers.get('content-disposition');
+    const blob = response.data;
+    return { blob, contentDisposition };
   } catch (error) {
     console.error('Failed to download files:', error);
     throw error;

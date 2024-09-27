@@ -4,18 +4,19 @@ import {
   deleteFiles,
   downloadFiles,
   syncKnowledgeBase,
-  deleteSelectedEmbedding
+  deleteSelectedEmbedding,
 } from "../../Redux/actions/ContentManagerAction";
 import { DataGrid } from "@mui/x-data-grid";
 import { Paper, Button, Stack } from "@mui/material";
-import LoadingButton from '@mui/lab/LoadingButton';
+import LoadingButton from "@mui/lab/LoadingButton";
 import useAlert from "../AlertComponent/useAlert";
 import Alert from "../AlertComponent/alert";
-import CloudDoneIcon from '@mui/icons-material/CloudDone';
-import CloudOffIcon from '@mui/icons-material/CloudOff';
-import DownloadIcon from '@mui/icons-material/Download';
-import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
+import CloudDoneIcon from "@mui/icons-material/CloudDone";
+import CloudOffIcon from "@mui/icons-material/CloudOff";
+import DownloadIcon from "@mui/icons-material/Download";
+import Typography from "@mui/material/Typography";
+import IconButton from "@mui/material/IconButton";
+import DeleteIcon from "@mui/icons-material/Delete";
 import "./FileListTable.css";
 
 function FileList({ refreshTrigger }) {
@@ -24,11 +25,15 @@ function FileList({ refreshTrigger }) {
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [syncStatus, setSyncStatus] = useState(false);
   const [deleteStatus, setDeleteStatus] = useState(false);
-  const { alertState, showAlert} = useAlert();
+  const { alertState, showAlert } = useAlert();
 
   useEffect(() => {
     fetchUploadedFiles();
   }, [refreshTrigger]);
+
+  useEffect(() => {
+    console.log(selectedFiles);
+  }, [selectedFiles]);
 
   useEffect(() => {
     const processedData = preprocessData(uploadedFiles);
@@ -49,7 +54,9 @@ function FileList({ refreshTrigger }) {
     return data.map((item) => ({
       id: item.file_id,
       filename: item.filename,
-      uploadDate: new Date(new Date(item.upload_date).getTime() + 8 * 60 * 60 * 1000).toLocaleString('en-US', { timeZone: 'Asia/Singapore' }),
+      uploadDate: new Date(
+        new Date(item.upload_date).getTime() + 8 * 60 * 60 * 1000
+      ).toLocaleString("en-US", { timeZone: "Asia/Singapore" }),
       sync: item.Synced,
     }));
   };
@@ -58,7 +65,7 @@ function FileList({ refreshTrigger }) {
     try {
       setDeleteStatus(true);
       const delete_file_result = await deleteFiles(fileIds);
-      const delete_embedding_result = await deleteSelectedEmbedding(fileIds);
+      await deleteSelectedEmbedding(fileIds);
       showAlert(delete_file_result.message, "success");
       fetchUploadedFiles(); // Refresh the list after deletion
     } catch (error) {
@@ -68,12 +75,21 @@ function FileList({ refreshTrigger }) {
     setDeleteStatus(false);
   };
 
-  const handleDownload = async (fileId, filename) => {
+  const handleDownload = async (fileIds) => {
     try {
-      const response = await downloadFiles(fileId);
-
-      // The response.data should already be a Blob
-      const blob = response.data;
+      // Ensure fileIds is always an array
+      const fileIdsArray = Array.isArray(fileIds) ? fileIds : [fileIds];
+      console.log(fileIdsArray);
+      const { blob, contentDisposition } = await downloadFiles(fileIdsArray);
+      console.log(contentDisposition);
+      // Get the filename from the Content-Disposition header
+      let filename = 'downloaded_file';
+      if (contentDisposition) {
+        const filenameMatch = contentDisposition.match(/filename=(.*?)(;|$)/i);
+        if (filenameMatch && filenameMatch[1]) {
+          filename = filenameMatch[1].replace(/['"]/g, '');
+        }
+      }
 
       // Create a temporary URL for the blob
       const url = window.URL.createObjectURL(blob);
@@ -106,27 +122,35 @@ function FileList({ refreshTrigger }) {
       headerName: "Action",
       width: 200,
       renderCell: (params) => (
-        <Stack direction="row" spacing={1} marginTop={1}>
-          <IconButton color="action" onClick={() => handleDownload(params.row.id, params.row.filename)}>
-            <DownloadIcon color="action"/>
+        <Stack direction="row" marginTop={1}>
+          <IconButton
+            onClick={() => handleDownload(params.row.id, params.row.filename)}
+          >
+            <DownloadIcon color="action" />
+          </IconButton>
+          <IconButton onClick={() => handleDelete(params.row.id)}>
+            <DeleteIcon color="error" />
           </IconButton>
         </Stack>
       ),
     },
-    { field: "status", headerName: "Status", width: 200, renderCell: (params) => (
-      params.row.sync ? (
-        <Stack direction="row" spacing={1} marginTop={1.5}>
-          <CloudDoneIcon color="success" />
-          <Typography>Synced</Typography>
-        </Stack>
-        
-      ) : (
-        <Stack direction="row" spacing={1} marginTop={1.5}>
-          <CloudOffIcon color="disabled" />
-          <Typography>Not Synced</Typography>
-        </Stack>
-      )
-    )},
+    {
+      field: "status",
+      headerName: "Status",
+      width: 200,
+      renderCell: (params) =>
+        params.row.sync ? (
+          <Stack direction="row" spacing={1} marginTop={1.5}>
+            <CloudDoneIcon color="success" />
+            <Typography>Synced</Typography>
+          </Stack>
+        ) : (
+          <Stack direction="row" spacing={1} marginTop={1.5}>
+            <CloudOffIcon color="disabled" />
+            <Typography>Not Synced</Typography>
+          </Stack>
+        ),
+    },
   ];
 
   const handleSync = async () => {
@@ -134,7 +158,6 @@ function FileList({ refreshTrigger }) {
       setSyncStatus(true);
       const response = await syncKnowledgeBase();
       if (response.status === 200) {
-
         showAlert(response.data.message, "success");
       } else {
         showAlert(response.data.error, "error");
@@ -149,9 +172,22 @@ function FileList({ refreshTrigger }) {
   return (
     <div className="file-list-container">
       <h2>Knowledge Base</h2>
-      <Stack direction="row" sx={{justifyContent: "space-between", marginLeft: 2}}>
-        <div className="file-list-delete-button-container">
-            {selectedFiles.length > 0 && (
+      <Stack
+        direction="row"
+        sx={{ justifyContent: "space-between", marginLeft: 2 }}
+      >
+        <div className="file-list-download-delete-button-container">
+          {selectedFiles.length > 0 && (
+            <Stack direction="row" spacing={2}>
+              <LoadingButton
+                variant="contained"
+                color="primary"
+                onClick={() => handleDownload(selectedFiles)}
+                loading={deleteStatus}
+                loadingIndicator="Processing..."
+              >
+                Download Selected Files
+              </LoadingButton>
               <LoadingButton
                 variant="outlined"
                 color="error"
@@ -161,7 +197,8 @@ function FileList({ refreshTrigger }) {
               >
                 Delete Selected Files
               </LoadingButton>
-            )}
+            </Stack>
+          )}
         </div>
         <div className="file-list-button-container">
           <Stack direction="row" spacing={2}>
@@ -173,11 +210,7 @@ function FileList({ refreshTrigger }) {
             >
               Sync Knowledge Base
             </LoadingButton>
-            <Button
-              variant="outlined"
-            onClick={() => {}}
-            disabled
-          >
+            <Button variant="outlined" onClick={() => {}} disabled>
               Check Sync Status
             </Button>
           </Stack>
