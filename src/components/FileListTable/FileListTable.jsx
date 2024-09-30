@@ -9,7 +9,6 @@ import {
 import { DataGrid } from "@mui/x-data-grid";
 import { Paper, Button, Stack } from "@mui/material";
 import LoadingButton from "@mui/lab/LoadingButton";
-import useAlert from "../AlertComponent/useAlert";
 import Alert from "../AlertComponent/alert";
 import CloudDoneIcon from "@mui/icons-material/CloudDone";
 import CloudOffIcon from "@mui/icons-material/CloudOff";
@@ -17,6 +16,7 @@ import DownloadIcon from "@mui/icons-material/Download";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
+import Confirmation from "../Confirmation/Confirmation";
 import "./FileListTable.css";
 
 function FileList({ refreshTrigger }) {
@@ -25,7 +25,11 @@ function FileList({ refreshTrigger }) {
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [syncStatus, setSyncStatus] = useState(false);
   const [deleteStatus, setDeleteStatus] = useState(false);
-  const { alertState, showAlert } = useAlert();
+  const [downloadStatus, setDownloadStatus] = useState(false);
+  const [alert, setAlert] = useState(null);
+  const [confirmationOpen, setConfirmationOpen] = useState(false);
+  const [filesToDelete, setFilesToDelete] = useState(null);
+  const [confirmationMessage, setConfirmationMessage] = useState("");
 
   useEffect(() => {
     fetchUploadedFiles();
@@ -39,6 +43,39 @@ function FileList({ refreshTrigger }) {
     const processedData = preprocessData(uploadedFiles);
     setProcessedData(processedData);
   }, [uploadedFiles]);
+
+  const showAlert = (message, severity) => {
+    setAlert({ message, severity });
+  };
+
+  const closeAlert = () => {
+    setAlert(null);
+  };
+  
+  const handleDeleteClick = (fileId) => {
+    setFilesToDelete([fileId]);
+    setConfirmationMessage("Are you sure you want to delete this file? This action will delete the file from the knowledge base.");
+    setConfirmationOpen(true);
+  };
+
+  const handleDeleteSelectedClick = () => {
+    setFilesToDelete(selectedFiles);
+    setConfirmationMessage(`Are you sure you want to delete ${selectedFiles.length} selected file(s)? This action will delete the file from the knowledge base.`);
+    setConfirmationOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (filesToDelete) {
+      handleDelete(filesToDelete);
+    }
+    setConfirmationOpen(false);
+    setFilesToDelete(null);
+  };
+
+  const handleCancelDelete = () => {
+    setConfirmationOpen(false);
+    setFilesToDelete(null);
+  };
 
   const fetchUploadedFiles = async () => {
     try {
@@ -64,8 +101,9 @@ function FileList({ refreshTrigger }) {
   const handleDelete = async (fileIds) => {
     try {
       setDeleteStatus(true);
-      const delete_file_result = await deleteFiles(fileIds);
-      await deleteSelectedEmbedding(fileIds);
+      const fileIdsArray = Array.isArray(fileIds) ? fileIds : [fileIds];
+      const delete_file_result = await deleteFiles(fileIdsArray);
+      await deleteSelectedEmbedding(fileIdsArray);
       showAlert(delete_file_result.message, "success");
       fetchUploadedFiles(); // Refresh the list after deletion
     } catch (error) {
@@ -77,7 +115,7 @@ function FileList({ refreshTrigger }) {
 
   const handleDownload = async (fileIds) => {
     try {
-      // Ensure fileIds is always an array
+      setDownloadStatus(true);
       const fileIdsArray = Array.isArray(fileIds) ? fileIds : [fileIds];
       console.log(fileIdsArray);
       const { blob, contentDisposition } = await downloadFiles(fileIdsArray);
@@ -112,6 +150,7 @@ function FileList({ refreshTrigger }) {
       console.error("Failed to download file:", error);
       showAlert("Failed to download file", "error");
     }
+    setDownloadStatus(false);
   };
 
   const columns = [
@@ -128,7 +167,7 @@ function FileList({ refreshTrigger }) {
           >
             <DownloadIcon color="action" />
           </IconButton>
-          <IconButton onClick={() => handleDelete(params.row.id)}>
+          <IconButton onClick={() => handleDeleteClick(params.row.id)}>
             <DeleteIcon color="error" />
           </IconButton>
         </Stack>
@@ -183,7 +222,7 @@ function FileList({ refreshTrigger }) {
                 variant="contained"
                 color="primary"
                 onClick={() => handleDownload(selectedFiles)}
-                loading={deleteStatus}
+                loading={downloadStatus}
                 loadingIndicator="Processing..."
               >
                 Download Selected Files
@@ -191,7 +230,7 @@ function FileList({ refreshTrigger }) {
               <LoadingButton
                 variant="outlined"
                 color="error"
-                onClick={() => handleDelete(selectedFiles)}
+                onClick={handleDeleteSelectedClick}
                 loading={deleteStatus}
                 loadingIndicator="Deleting..."
               >
@@ -230,11 +269,25 @@ function FileList({ refreshTrigger }) {
           />
         </Paper>
       </div>
-      <Alert
-        message={alertState.message}
-        severity={alertState.severity}
-        duration={5000}
+      <Confirmation
+        handleOpen={confirmationOpen}
+        handleClose={handleCancelDelete}
+        onConfirm={handleConfirmDelete}
+        title="Confirm Deletion"
+        description={confirmationMessage}
+        confirmText="Delete"
+        rejectText="Cancel"
       />
+      {alert && (
+        <div className="alert-container">
+          <Alert
+            message={alert.message}
+            severity={alert.severity}
+            duration={3000}
+            onClose={closeAlert}
+          />
+        </div>
+      )}
     </div>
   );
 }

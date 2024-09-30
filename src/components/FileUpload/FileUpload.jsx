@@ -12,14 +12,13 @@ import {
 import LoadingButton from "@mui/lab/LoadingButton";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Alert from '../AlertComponent/alert';
-import useAlert from '../AlertComponent/useAlert';
 import "./FileUpload.css";
 
 function FileUpload({ onUploadComplete }) {
   const [files, setFiles] = useState([]);
   const [uploading, setUploading] = useState(false);
-  const { alertState, showAlert, clearAlert } = useAlert();
-
+  const [alert, setAlert] = useState(null);
+  
   const onDrop = useCallback((acceptedFiles) => {
     setFiles((prevFiles) => [...prevFiles, ...acceptedFiles]);
   }, []);
@@ -34,6 +33,14 @@ function FileUpload({ onUploadComplete }) {
       "application/vnd.ms-powerpoint": [".ppt"]
     },
   });
+
+  const showAlert = (message, severity) => {
+    setAlert({ message, severity});
+  };
+
+  const closeAlert = () => {
+    setAlert(null);
+  };
 
   const handleUpload = async () => {
     setUploading(true);
@@ -59,6 +66,7 @@ function FileUpload({ onUploadComplete }) {
   const handleCancel = () => {
     setFiles([]);
   };
+
 
   return (
     <div className="file-upload">
@@ -141,12 +149,15 @@ function FileUpload({ onUploadComplete }) {
           </Stack>
         </div>
       </div>
-      <Alert
-        message={alertState.message}
-        severity={alertState.severity}
-        duration={3000}
-        onClose={clearAlert}
-      />
+      {alert && (
+      <div className="alert-container">
+        <Alert
+          message={alert.message}
+          severity={alert.severity}
+          onClose={() => {closeAlert()}}
+        />
+        </div>
+      )}
     </div>
   );
 }
