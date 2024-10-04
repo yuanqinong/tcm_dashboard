@@ -55,41 +55,6 @@
   color: var(--text-primary);
 }
 
-.social-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  padding: 0.75rem;
-  margin-bottom: 1rem;
-  border: 1px solid var(--border-color);
-  border-radius: 4px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.social-button img {
-  margin-right: 0.5rem;
-  width: 20px;
-  height: 20px;
-}
-
-.social-button.google {
-  background-color: var(--google-blue);
-  color: var(--white);
-}
-
-.social-button.facebook {
-  background-color: var(--white);
-  color: var(--facebook-blue);
-}
-
-.social-button.twitter {
-  background-color: var(--white);
-  color: var(--twitter-blue);
-}
-
 .divider {
   text-align: center;
   margin: 1rem 0;

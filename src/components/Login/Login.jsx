@@ -32,19 +32,6 @@ function Login() {
       </div>
       <div className="auth-right">
         <h2>{isLogin ? 'Log In' : 'Sign Up'}</h2>
-        <button className="social-button google">
-          <img src="/google-icon.png" alt="Google" />
-          Continue with Google
-        </button>
-        <button className="social-button facebook">
-          <img src="/facebook-icon.png" alt="Facebook" />
-          Continue with Facebook
-        </button>
-        <button className="social-button twitter">
-          <img src="/twitter-icon.png" alt="Twitter" />
-          Continue with Twitter
-        </button>
-        <div className="divider">or</div>
         <form onSubmit={handleSubmit}>
           <input
             type="email"
@@ -67,7 +54,7 @@ function Login() {
         ) : <p className='spacer'></p>}
         <p className="switch-mode">
           {isLogin ? "Don't have an account? " : "Already have an account? "}
-          <a href="#" onClick={() => setIsLogin(!isLogin)}>{isLogin ? 'Signup Now' : 'Login'}</a>
+          <a href="#" onClick={() => setIsLogin(!isLogin)}>{isLogin ? 'Sign up' : 'Login'}</a>
         </p>
       </div>
     </div>
