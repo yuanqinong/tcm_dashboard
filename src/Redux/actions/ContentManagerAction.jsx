@@ -14,7 +14,7 @@ export const uploadFiles = async (files) => {
   files.forEach(file => formData.append('files', file));
 
   try {
-    const response = await api.post('/upload', formData, {
+    const response = await api.post('/api/dashboard/upload', formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
@@ -29,7 +29,7 @@ export const uploadFiles = async (files) => {
 
 export const getUploadedFiles = async () => {
   try {
-    const response = await api.get('/files');
+    const response = await api.get('/api/dashboard/files');
     return response.data;
   } catch (error) {
     console.error('Failed to fetch files:', error);
@@ -39,7 +39,7 @@ export const getUploadedFiles = async () => {
 
 export const downloadFiles = async (fileIds) => {
   try {
-    const response = await api.post(`/download_files`, fileIds, {
+    const response = await api.post(`/api/dashboard/download_files`, fileIds, {
       responseType: 'blob'
     });
     console.log("header",response.headers);
@@ -54,7 +54,7 @@ export const downloadFiles = async (fileIds) => {
 
 export const deleteFiles = async (fileIds) => {
   try {
-    const response = await api.delete('/delete_file', { 
+    const response = await api.delete('/api/dashboard/delete_file', { 
       data: fileIds  
     });
     return response.data;
@@ -66,7 +66,7 @@ export const deleteFiles = async (fileIds) => {
 
 export const syncKnowledgeBase = async () => {
   try {
-    const response = await api.post('/sync_knowledge_base');
+    const response = await api.post('/api/dashboard/sync_knowledge_base');
     return response;
   } catch (error) {
     console.error('Failed to sync database:', error);
@@ -76,7 +76,7 @@ export const syncKnowledgeBase = async () => {
 
 export const deleteSelectedEmbedding = async (fileIds) => {
   try {
-    const response = await api.delete('/delete_embeddings', { 
+    const response = await api.delete('/api/dashboard/delete_embeddings', { 
       data: fileIds  
     });
     return response.data;
