@@ -28,9 +28,8 @@ function FileUpload({ onUploadComplete }) {
     accept: {
       "application/pdf": [".pdf"],
       "application/vnd.openxmlformats-officedocument.wordprocessingml.document": [".docx"],
-      "application/msword": [".doc"],
-      "application/vnd.openxmlformats-officedocument.presentationml.presentation": [".pptx"],
-      "application/vnd.ms-powerpoint": [".ppt"]
+      "text/csv": [".csv"],
+      "text/plain": [".txt"],
     },
   });
 
@@ -81,7 +80,7 @@ function FileUpload({ onUploadComplete }) {
             <p>
               Drag & drop files or <span className="browse-text">Browse</span>
             </p>
-            <p className="file-types">Supported formats: PDF, Word (DOC, DOCX), PowerPoint (PPT, PPTX)</p>
+            <p className="file-types">Supported formats: PDF, Word (DOCX), CSV, TXT</p>
           </div>
         </div>
         

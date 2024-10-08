@@ -84,4 +84,14 @@ export const deleteSelectedEmbedding = async (fileIds) => {
     console.error('Failed to delete embeddings:', error);
     throw error;
   }
-}
+};
+
+export const getUnprocessedFilesCount = async () => {
+  try {
+    const response = await api.get('/api/dashboard/unprocessed_files');
+    return response.data;
+  } catch (error) {
+    console.error('Failed to get unprocessed files count:', error);
+    throw error;
+  }
+};
