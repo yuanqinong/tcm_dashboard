@@ -14,7 +14,7 @@ export const uploadFiles = async (files) => {
   files.forEach(file => formData.append('files', file));
 
   try {
-    const response = await api.post('/api/dashboard/upload', formData, {
+    const response = await api.post('/api/dashboard/upload_files', formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
@@ -33,6 +33,16 @@ export const getUploadedFiles = async () => {
     return response.data;
   } catch (error) {
     console.error('Failed to fetch files:', error);
+    throw error;
+  }
+};
+
+export const getUploadedLinks = async () => {
+  try {
+    const response = await api.get('/api/dashboard/links');
+    return response.data;
+  } catch (error) {
+    console.error('Failed to fetch links:', error);
     throw error;
   }
 };

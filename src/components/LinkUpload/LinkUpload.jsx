@@ -20,6 +20,8 @@ const LinkUpload = () => {
   const [inputUrl, setInputUrl] = useState("");
   const [links, setLinks] = useState([]);
   const [uploading, setUploading] = useState(false);
+  const [linkError, setLinkError] = useState(false);
+  const [linkErrorMessage, setLinkErrorMessage] = useState("");
 
   const handleInputChange = (e) => {
     setInputUrl(e.target.value);
@@ -44,11 +46,27 @@ const LinkUpload = () => {
     }
   };
 
-
   const handleLinkSubmit = () => {
-    // Implement the logic for handling the link submission
-    // For now, just call handleAddLink
-    handleAddLink();
+    const urlPattern = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
+    const trimmedUrl = inputUrl.trim();
+    
+    if (trimmedUrl !== "" && urlPattern.test(trimmedUrl)) {
+      if (links.includes(trimmedUrl)) {
+        setLinkErrorMessage("*This link has already been added");
+        setLinkError(true);
+      } else {
+        setLinkError(false);
+        handleAddLink();
+      }
+    } else {
+      setLinkErrorMessage("*Please enter a valid URL");
+      setLinkError(true);
+    }
+  };
+
+  const handleCancel = () => {
+    setLinks([]);
+    setInputUrl("");
   };
 
   useEffect(() => {
@@ -56,8 +74,8 @@ const LinkUpload = () => {
   }, [links]);
 
   return (
-    <Box>
-      <Box sx={{ width: "98%", marginLeft: 3, marginBottom: 5 }}>
+    <Box sx={{marginLeft: 3, marginBottom: 5, marginRight: 3}}>
+      <Box >
         <Typography variant="body1" gutterBottom>
           Or add Website URL
         </Typography>
@@ -86,11 +104,16 @@ const LinkUpload = () => {
             type="button"
             sx={{ p: "10px" }}
             aria-label="add"
-            onClick={handleAddLink}
+            onClick={handleLinkSubmit}
           >
             <AddIcon />
           </IconButton>
         </Paper>
+        {linkError && (
+          <Typography variant="caption" sx={{ color: "red" }}>
+            {linkErrorMessage}
+          </Typography>
+        )}
         {links.length > 0 && (
           <Paper
             sx={{ mt: 2, maxHeight: 300, overflow: "auto", width: "100%" }}
@@ -107,7 +130,7 @@ const LinkUpload = () => {
               }}
             >
               Added links - {links.length}{" "}
-              {links.length === 1 ? "file" : "files"}
+              {links.length === 1 ? "link" : "links"}
             </Typography>
             <List>
               {links.map((link, index) => (
@@ -142,7 +165,6 @@ const LinkUpload = () => {
           marginTop: "2rem",
           justifyContent: "flex-end",
           alignItems: "flex-start",
-          marginRight: 4,
         }}
       >
         <LoadingButton
@@ -157,7 +179,7 @@ const LinkUpload = () => {
         </LoadingButton>
         <Button
           variant="text"
-          onClick={() => {}}
+          onClick={handleCancel}
           disabled={uploading || links.length === 0}
         >
           Cancel

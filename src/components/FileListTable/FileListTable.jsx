@@ -3,6 +3,7 @@ import {
   getUploadedFiles,
   deleteFiles,
   downloadFiles,
+  getUploadedLinks,
   syncKnowledgeBase,
   deleteSelectedEmbedding,
 } from "../../Redux/actions/ContentManagerAction";
@@ -20,7 +21,7 @@ import Confirmation from "../Confirmation/Confirmation";
 import "./FileListTable.css";
 
 function FileList({ refreshTrigger }) {
-  const [uploadedFiles, setUploadedFiles] = useState([]);
+  const [uploadedData, setUploaded] = useState([]);
   const [processedData, setProcessedData] = useState([]);
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [syncStatus, setSyncStatus] = useState(false);
@@ -32,7 +33,7 @@ function FileList({ refreshTrigger }) {
   const [confirmationMessage, setConfirmationMessage] = useState("");
 
   useEffect(() => {
-    fetchUploadedFiles();
+    fetchUploaded();
   }, [refreshTrigger]);
 
   useEffect(() => {
@@ -40,9 +41,17 @@ function FileList({ refreshTrigger }) {
   }, [selectedFiles]);
 
   useEffect(() => {
-    const processedData = preprocessData(uploadedFiles);
+    const processedData = preprocessData(uploadedData);
     setProcessedData(processedData);
-  }, [uploadedFiles]);
+  }, [uploadedData]);
+
+  useEffect(() => {
+    console.log(uploadedData);
+  }, [uploadedData]);
+
+  useEffect(() => {
+    console.log(processedData);
+  }, [processedData]);
 
   const showAlert = (message, severity) => {
     setAlert({ message, severity });
@@ -51,16 +60,20 @@ function FileList({ refreshTrigger }) {
   const closeAlert = () => {
     setAlert(null);
   };
-  
+
   const handleDeleteClick = (fileId) => {
     setFilesToDelete([fileId]);
-    setConfirmationMessage("Are you sure you want to delete this file? This action will delete the file from the knowledge base.");
+    setConfirmationMessage(
+      "Are you sure you want to delete this file? This action will delete the file from the knowledge base."
+    );
     setConfirmationOpen(true);
   };
 
   const handleDeleteSelectedClick = () => {
     setFilesToDelete(selectedFiles);
-    setConfirmationMessage(`Are you sure you want to delete ${selectedFiles.length} selected file(s)? This action will delete the file from the knowledge base.`);
+    setConfirmationMessage(
+      `Are you sure you want to delete ${selectedFiles.length} selected file(s)? This action will delete the file from the knowledge base.`
+    );
     setConfirmationOpen(true);
   };
 
@@ -77,24 +90,25 @@ function FileList({ refreshTrigger }) {
     setFilesToDelete(null);
   };
 
-  const fetchUploadedFiles = async () => {
+  const fetchUploaded = async () => {
     try {
       const files = await getUploadedFiles();
-      setUploadedFiles(files);
+      const links = await getUploadedLinks(); // You'll need to implement this function
+      const combinedData = [...files, ...links];
+      setUploaded(combinedData);
     } catch (error) {
-      console.error("Failed to fetch uploaded files:", error);
-      showAlert("Failed to fetch uploaded files", "error");
+      console.error("Failed to fetch uploaded files and links:", error);
+      showAlert("Failed to fetch uploaded files and links", "error");
     }
   };
 
   const preprocessData = (data) => {
     return data.map((item) => ({
-      id: item.file_id,
+      id: item.id,
       filename: item.filename,
-      uploadDate: new Date(
-        new Date(item.upload_date).getTime() + 8 * 60 * 60 * 1000
-      ).toLocaleString("en-US", { timeZone: "Asia/Singapore" }),
-      sync: item.Synced,
+      url: item.url,
+      uploadDate: new Date(item.upload_date).toLocaleString("en-US", { timeZone: "Asia/Singapore" }),
+      Synced: item.Synced,
     }));
   };
 
@@ -105,7 +119,7 @@ function FileList({ refreshTrigger }) {
       const delete_file_result = await deleteFiles(fileIdsArray);
       await deleteSelectedEmbedding(fileIdsArray);
       showAlert(delete_file_result.message, "success");
-      fetchUploadedFiles(); // Refresh the list after deletion
+      fetchUploaded(); // Refresh the list after deletion
     } catch (error) {
       console.error("Failed to delete files:", error);
       showAlert("Failed to delete files", "error");
@@ -121,11 +135,11 @@ function FileList({ refreshTrigger }) {
       const { blob, contentDisposition } = await downloadFiles(fileIdsArray);
       console.log(contentDisposition);
       // Get the filename from the Content-Disposition header
-      let filename = 'downloaded_file';
+      let filename = "downloaded_file";
       if (contentDisposition) {
         const filenameMatch = contentDisposition.match(/filename=(.*?)(;|$)/i);
         if (filenameMatch && filenameMatch[1]) {
-          filename = filenameMatch[1].replace(/['"]/g, '');
+          filename = filenameMatch[1].replace(/['"]/g, "");
         }
       }
 
@@ -154,19 +168,32 @@ function FileList({ refreshTrigger }) {
   };
 
   const columns = [
-    { field: "filename", headerName: "File Name", width: 500 },
+    {
+      field: "name",
+      headerName: "Name",
+      width: 500,
+      renderCell: (params) => params.row.filename || params.row.url,
+    },
     { field: "uploadDate", headerName: "Upload Date", width: 200 },
+    {
+      field: "type",
+      headerName: "Type",
+      width: 100,
+      renderCell: (params) => (params.row.filename ? "File" : "Website"),
+    },
     {
       field: "action",
       headerName: "Action",
       width: 200,
       renderCell: (params) => (
         <Stack direction="row" marginTop={1}>
-          <IconButton
-            onClick={() => handleDownload(params.row.id, params.row.filename)}
-          >
-            <DownloadIcon color="action" />
-          </IconButton>
+          {params.row.filename && (
+            <IconButton
+              onClick={() => handleDownload(params.row.id, params.row.filename)}
+            >
+              <DownloadIcon color="action" />
+            </IconButton>
+          )}
           <IconButton onClick={() => handleDeleteClick(params.row.id)}>
             <DeleteIcon color="error" />
           </IconButton>
@@ -178,7 +205,7 @@ function FileList({ refreshTrigger }) {
       headerName: "Status",
       width: 200,
       renderCell: (params) =>
-        params.row.sync ? (
+        params.row.Synced ? (
           <Stack direction="row" spacing={1} marginTop={1.5}>
             <CloudDoneIcon color="success" />
             <Typography>Synced</Typography>
@@ -196,7 +223,7 @@ function FileList({ refreshTrigger }) {
     try {
       setSyncStatus(true);
       const response = await syncKnowledgeBase();
-      if (response.status === 200) {
+      if (response.data.message) {
         showAlert(response.data.message, "success");
       } else {
         showAlert(response.data.error, "error");
@@ -205,7 +232,7 @@ function FileList({ refreshTrigger }) {
       showAlert("Failed to sync knowledge base", "error");
     }
     setSyncStatus(false);
-    fetchUploadedFiles();
+    fetchUploaded();
   };
 
   return (
