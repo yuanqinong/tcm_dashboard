@@ -15,22 +15,42 @@ import {
 import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import LoadingButton from "@mui/lab/LoadingButton";
+import Alert from '../AlertComponent/alert';
+import { uploadLinks } from "../../Redux/actions/ContentManagerAction";
 
-const LinkUpload = () => {
+const LinkUpload = ({onUploadComplete}) => {
   const [inputUrl, setInputUrl] = useState("");
   const [links, setLinks] = useState([]);
   const [uploading, setUploading] = useState(false);
   const [linkError, setLinkError] = useState(false);
   const [linkErrorMessage, setLinkErrorMessage] = useState("");
+  const [alert, setAlert] = useState(null);
 
+  const showAlert = (message, severity) => {
+    setAlert({ message, severity});
+  };
+
+  const closeAlert = () => {
+    setAlert(null);
+  };
   const handleInputChange = (e) => {
     setInputUrl(e.target.value);
   };
 
-  const handleAddLink = () => {
-    if (inputUrl.trim() !== "") {
-      setLinks([...links, inputUrl]);
-      setInputUrl("");
+  const handleUploadLink = async () => {
+    setUploading(true);
+    try {
+      const result = await uploadLinks(links);
+      if (result) {
+        showAlert(`${result.message}. Please index the links in the knowledge base.`, "success");
+        setLinks([]);
+        onUploadComplete(); // Call this after successful upload
+      }
+    } catch (error) {
+      console.error("Upload failed:", error);
+      showAlert("Upload failed", "error");
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -56,7 +76,9 @@ const LinkUpload = () => {
         setLinkError(true);
       } else {
         setLinkError(false);
-        handleAddLink();
+        setLinkErrorMessage("");
+        setLinks([...links, trimmedUrl]);
+        setInputUrl(""); // Clear the input field after adding
       }
     } else {
       setLinkErrorMessage("*Please enter a valid URL");
@@ -170,7 +192,7 @@ const LinkUpload = () => {
         <LoadingButton
           variant="contained"
           size="medium"
-          onClick={() => {}}
+          onClick={handleUploadLink}
           disabled={uploading || links.length === 0}
           loading={uploading}
           loadingIndicator="Uploading..."
@@ -185,6 +207,15 @@ const LinkUpload = () => {
           Cancel
         </Button>
       </Stack>
+      {alert && (
+      <div className="alert-container">
+        <Alert
+          message={alert.message}
+          severity={alert.severity}
+          onClose={() => {closeAlert()}}
+        />
+        </div>
+      )}
     </Box>
   );
 };

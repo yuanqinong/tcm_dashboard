@@ -23,7 +23,7 @@ function Confirmation({ handleOpen, handleClose, onConfirm, title, description, 
         </DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onConfirm}>{confirmText}</Button>
+        <Button onClick={onConfirm} color="error">{confirmText}</Button>
         <Button onClick={handleClose} autoFocus>
           {rejectText}
         </Button>

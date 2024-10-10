@@ -27,6 +27,16 @@ export const uploadFiles = async (files) => {
   }
 };
 
+export const uploadLinks = async (links) => {
+  try {
+    const response = await api.post('/api/dashboard/upload_links', links);
+    return response.data;
+  } catch (error) {
+    console.error('Upload failed:', error);
+    throw error;
+  }
+};
+
 export const getUploadedFiles = async () => {
   try {
     const response = await api.get('/api/dashboard/files');
@@ -102,6 +112,28 @@ export const getUnprocessedFilesCount = async () => {
     return response.data;
   } catch (error) {
     console.error('Failed to get unprocessed files count:', error);
+    throw error;
+  }
+};
+
+export const deleteLinks = async (linkIds) => {
+  try {
+    const response = await api.delete('/api/dashboard/delete_links', { 
+      data: linkIds  
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Failed to delete links:', error);
+    throw error;
+  }
+};
+
+export const getUrlWithId = async (ids) => {
+  try {
+    const response = await api.post('/api/dashboard/url_with_id/', { ids });
+    return response.data;
+  } catch (error) {
+    console.error('Failed to get url with id:', error);
     throw error;
   }
 };

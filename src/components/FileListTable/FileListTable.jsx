@@ -6,6 +6,8 @@ import {
   getUploadedLinks,
   syncKnowledgeBase,
   deleteSelectedEmbedding,
+  deleteLinks,
+  getUrlWithId,
 } from "../../Redux/actions/ContentManagerAction";
 import { DataGrid } from "@mui/x-data-grid";
 import { Paper, Button, Stack } from "@mui/material";
@@ -17,41 +19,34 @@ import DownloadIcon from "@mui/icons-material/Download";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
 import DeleteIcon from "@mui/icons-material/Delete";
+import PageviewIcon from '@mui/icons-material/Pageview';
 import Confirmation from "../Confirmation/Confirmation";
 import "./FileListTable.css";
 
 function FileList({ refreshTrigger }) {
   const [uploadedData, setUploaded] = useState([]);
   const [processedData, setProcessedData] = useState([]);
-  const [selectedFiles, setSelectedFiles] = useState([]);
   const [syncStatus, setSyncStatus] = useState(false);
   const [deleteStatus, setDeleteStatus] = useState(false);
-  const [downloadStatus, setDownloadStatus] = useState(false);
+  const [previewStatus, setPreviewStatus] = useState(false);
   const [alert, setAlert] = useState(null);
   const [confirmationOpen, setConfirmationOpen] = useState(false);
-  const [filesToDelete, setFilesToDelete] = useState(null);
   const [confirmationMessage, setConfirmationMessage] = useState("");
+  const [selectedItems, setSelectedItems] = useState({ files: [], links: [] });
 
   useEffect(() => {
     fetchUploaded();
   }, [refreshTrigger]);
 
   useEffect(() => {
-    console.log(selectedFiles);
-  }, [selectedFiles]);
+    console.log(selectedItems);
+  }, [selectedItems]);
 
   useEffect(() => {
     const processedData = preprocessData(uploadedData);
     setProcessedData(processedData);
-  }, [uploadedData]);
-
-  useEffect(() => {
-    console.log(uploadedData);
-  }, [uploadedData]);
-
-  useEffect(() => {
     console.log(processedData);
-  }, [processedData]);
+  }, [uploadedData]);
 
   const showAlert = (message, severity) => {
     setAlert({ message, severity });
@@ -61,33 +56,39 @@ function FileList({ refreshTrigger }) {
     setAlert(null);
   };
 
-  const handleDeleteClick = (fileId) => {
-    setFilesToDelete([fileId]);
+  const handleDeleteClick = (id) => {
     setConfirmationMessage(
-      "Are you sure you want to delete this file? This action will delete the file from the knowledge base."
+      "Are you sure you want to delete selected item(s)? This action will delete the selected item(s) from the knowledge base."
     );
     setConfirmationOpen(true);
   };
 
-  const handleDeleteSelectedClick = () => {
-    setFilesToDelete(selectedFiles);
-    setConfirmationMessage(
-      `Are you sure you want to delete ${selectedFiles.length} selected file(s)? This action will delete the file from the knowledge base.`
-    );
-    setConfirmationOpen(true);
-  };
-
-  const handleConfirmDelete = () => {
-    if (filesToDelete) {
-      handleDelete(filesToDelete);
-    }
+  const handleConfirmDelete = async () => {
+    setDeleteStatus(true);
     setConfirmationOpen(false);
-    setFilesToDelete(null);
+    try {
+      const deletePromises = [];
+
+      if (selectedItems.files.length > 0) {
+        deletePromises.push(handleDeleteFiles(selectedItems.files));
+      }
+      if (selectedItems.links.length > 0) {
+        deletePromises.push(handleDeleteLinks(selectedItems.links.map(link => link.id)));
+      }
+
+      await Promise.all(deletePromises);
+      showAlert("Items deleted successfully", "success");
+    } catch (error) {
+      console.error("Error during deletion:", error);
+      showAlert("An error occurred during deletion", "error");
+    } finally {
+      setDeleteStatus(false);
+      fetchUploaded(); // Refresh the list after deletion
+    }
   };
 
   const handleCancelDelete = () => {
     setConfirmationOpen(false);
-    setFilesToDelete(null);
   };
 
   const fetchUploaded = async () => {
@@ -95,6 +96,7 @@ function FileList({ refreshTrigger }) {
       const files = await getUploadedFiles();
       const links = await getUploadedLinks(); // You'll need to implement this function
       const combinedData = [...files, ...links];
+      console.log("combinedData",combinedData);
       setUploaded(combinedData);
     } catch (error) {
       console.error("Failed to fetch uploaded files and links:", error);
@@ -103,18 +105,27 @@ function FileList({ refreshTrigger }) {
   };
 
   const preprocessData = (data) => {
-    return data.map((item) => ({
-      id: item.id,
-      filename: item.filename,
-      url: item.url,
-      uploadDate: new Date(item.upload_date).toLocaleString("en-US", { timeZone: "Asia/Singapore" }),
-      Synced: item.Synced,
-    }));
+    return data.map((item) => {
+      const processedItem = {
+        id: item.id,
+        uploadDate: new Date(item.upload_date).toLocaleString("en-US", { timeZone: "Asia/Singapore" }),
+        Synced: item.Synced,
+      };
+
+      if (item.filename) {
+        processedItem.filename = item.filename;
+      }
+
+      if (item.url) {
+        processedItem.url = item.url;
+      }
+
+      return processedItem;
+    });
   };
 
-  const handleDelete = async (fileIds) => {
+  const handleDeleteFiles = async (fileIds) => {
     try {
-      setDeleteStatus(true);
       const fileIdsArray = Array.isArray(fileIds) ? fileIds : [fileIds];
       const delete_file_result = await deleteFiles(fileIdsArray);
       await deleteSelectedEmbedding(fileIdsArray);
@@ -124,16 +135,24 @@ function FileList({ refreshTrigger }) {
       console.error("Failed to delete files:", error);
       showAlert("Failed to delete files", "error");
     }
-    setDeleteStatus(false);
+  };
+
+  const handleDeleteLinks = async (linkIds) => {
+    try {
+      const linkIdsArray = Array.isArray(linkIds) ? linkIds : [linkIds];
+      const delete_link_result = await deleteLinks(linkIdsArray);
+      showAlert(delete_link_result.message, "success");
+    }
+    catch (error) {
+      console.error("Failed to delete links:", error);
+      showAlert("Failed to delete links", "error");
+    }
   };
 
   const handleDownload = async (fileIds) => {
     try {
-      setDownloadStatus(true);
       const fileIdsArray = Array.isArray(fileIds) ? fileIds : [fileIds];
-      console.log(fileIdsArray);
       const { blob, contentDisposition } = await downloadFiles(fileIdsArray);
-      console.log(contentDisposition);
       // Get the filename from the Content-Disposition header
       let filename = "downloaded_file";
       if (contentDisposition) {
@@ -164,7 +183,18 @@ function FileList({ refreshTrigger }) {
       console.error("Failed to download file:", error);
       showAlert("Failed to download file", "error");
     }
-    setDownloadStatus(false);
+  };
+
+  const handleViewClick = (urls) => {
+    if (typeof urls === 'string') {
+      // If it's a single URL
+      window.open(urls, "_blank");
+    } else if (Array.isArray(urls)) {
+      // If it's an array of URLs
+      urls.forEach(url => {
+        window.open(url, "_blank");
+      });
+    }
   };
 
   const columns = [
@@ -181,6 +211,7 @@ function FileList({ refreshTrigger }) {
       width: 100,
       renderCell: (params) => (params.row.filename ? "File" : "Website"),
     },
+    /*
     {
       field: "action",
       headerName: "Action",
@@ -194,12 +225,18 @@ function FileList({ refreshTrigger }) {
               <DownloadIcon color="action" />
             </IconButton>
           )}
+          {params.row.url && (
+            <IconButton onClick={() => handleViewClick(params.row.url)}>
+              <PageviewIcon color="action" />
+            </IconButton>
+          )}
           <IconButton onClick={() => handleDeleteClick(params.row.id)}>
             <DeleteIcon color="error" />
           </IconButton>
         </Stack>
       ),
     },
+    */
     {
       field: "status",
       headerName: "Status",
@@ -235,6 +272,23 @@ function FileList({ refreshTrigger }) {
     fetchUploaded();
   };
 
+  const handleBatchPreview = async () => {
+    try {
+      setPreviewStatus(true);
+      if (selectedItems.files.length > 0) {
+        await handleDownload(selectedItems.files);
+      }
+      if (selectedItems.links.length > 0) {
+        handleViewClick(selectedItems.links.map(link => link.url));
+      }
+    }
+    catch (error) {
+      console.error("Failed to download file:", error);
+      showAlert("Failed to preview selected items. Please try again later.", "error");
+    }
+    setPreviewStatus(false);
+  }
+
   return (
     <div className="file-list-container">
       <h2>Knowledge Base</h2>
@@ -243,25 +297,25 @@ function FileList({ refreshTrigger }) {
         sx={{ justifyContent: "space-between", marginLeft: 2 }}
       >
         <div className="file-list-download-delete-button-container">
-          {selectedFiles.length > 0 && (
+          {(selectedItems.files.length > 0 || selectedItems.links.length > 0) && (
             <Stack direction="row" spacing={2}>
               <LoadingButton
                 variant="contained"
                 color="primary"
-                onClick={() => handleDownload(selectedFiles)}
-                loading={downloadStatus}
+                onClick={handleBatchPreview}
+                loading={previewStatus}
                 loadingIndicator="Processing..."
               >
-                Download Selected Files
+                Preview Selected
               </LoadingButton>
               <LoadingButton
                 variant="outlined"
                 color="error"
-                onClick={handleDeleteSelectedClick}
+                onClick={handleDeleteClick}
                 loading={deleteStatus}
                 loadingIndicator="Deleting..."
               >
-                Delete Selected Files
+                Delete Selected
               </LoadingButton>
             </Stack>
           )}
@@ -289,9 +343,24 @@ function FileList({ refreshTrigger }) {
             columns={columns}
             checkboxSelection
             onRowSelectionModelChange={(newRowSelectionModel) => {
-              setSelectedFiles(newRowSelectionModel);
+              const selectedFiles = [];
+              const selectedLinks = [];
+
+              newRowSelectionModel.forEach((id) => {
+                const item = processedData.find((row) => row.id === id);
+                if (item.filename) {
+                  selectedFiles.push(id);
+                } else if (item.url) {
+                  selectedLinks.push({ id: id, url: item.url });
+                }
+              });
+
+              setSelectedItems({ files: selectedFiles, links: selectedLinks });
             }}
-            rowSelectionModel={selectedFiles}
+            rowSelectionModel={[
+              ...selectedItems.files,
+              ...selectedItems.links.map(link => link.id)
+            ]}
             sx={{ border: 0 }}
           />
         </Paper>
