@@ -94,10 +94,10 @@ export const syncKnowledgeBase = async () => {
   }
 };
 
-export const deleteSelectedEmbedding = async (fileIds) => {
+export const deleteSelectedEmbedding = async (ids) => {
   try {
     const response = await api.delete('/api/dashboard/delete_embeddings', { 
-      data: fileIds  
+      data: ids  
     });
     return response.data;
   } catch (error) {

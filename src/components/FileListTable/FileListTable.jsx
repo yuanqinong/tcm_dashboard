@@ -130,7 +130,6 @@ function FileList({ refreshTrigger }) {
       const delete_file_result = await deleteFiles(fileIdsArray);
       await deleteSelectedEmbedding(fileIdsArray);
       showAlert(delete_file_result.message, "success");
-      fetchUploaded(); // Refresh the list after deletion
     } catch (error) {
       console.error("Failed to delete files:", error);
       showAlert("Failed to delete files", "error");
@@ -141,6 +140,7 @@ function FileList({ refreshTrigger }) {
     try {
       const linkIdsArray = Array.isArray(linkIds) ? linkIds : [linkIds];
       const delete_link_result = await deleteLinks(linkIdsArray);
+      await deleteSelectedEmbedding(linkIdsArray);
       showAlert(delete_link_result.message, "success");
     }
     catch (error) {
