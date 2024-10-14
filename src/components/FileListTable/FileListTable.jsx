@@ -108,18 +108,18 @@ function FileList({ refreshTrigger }) {
     return data.map((item) => {
       const processedItem = {
         id: item.id,
-        uploadDate: new Date(item.upload_date).toLocaleString("en-US", { timeZone: "Asia/Singapore" }),
+        uploadDate: new Date(item.upload_date).toLocaleString("en-US"),
         Synced: item.Synced,
       };
-
+  
       if (item.filename) {
         processedItem.filename = item.filename;
       }
-
+  
       if (item.url) {
         processedItem.url = item.url;
       }
-
+  
       return processedItem;
     });
   };
