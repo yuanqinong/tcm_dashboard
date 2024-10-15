@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Button,
   TextField,
@@ -9,51 +10,61 @@ import {
   Box,
   IconButton,
   InputAdornment,
-} from '@mui/material';
-import { Visibility, VisibilityOff } from '@mui/icons-material';
+} from "@mui/material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { login, signup } from "../../Redux/actions/LoginAction";
+import Alert from '../AlertComponent/alert';
 
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
+  const [alert, setAlert] = useState(null);
+
+  const showAlert = (message, severity) => {
+    setAlert({ message, severity});
+  };
+
+  const closeAlert = () => {
+    setAlert(null);
+  };
+
   const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-    confirmPassword: '',
+    username: "",
+    password: "",
+    confirmPassword: "",
   });
   const [errors, setErrors] = useState({
-    email: '',
-    password: '',
-    confirmPassword: '',
+    username: "",
+    password: "",
+    confirmPassword: "",
   });
+  const navigate = useNavigate();
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-    setErrors((prev) => ({ ...prev, [name]: '' }));
+    setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
   const validateForm = () => {
     let isValid = true;
     const newErrors = { ...errors };
 
-    if (!formData.email) {
-      newErrors.email = 'Email is required';
-      isValid = false;
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Email is invalid';
+    if (!formData.username) {
+      newErrors.username = "Username is required";
       isValid = false;
     }
 
     if (!formData.password) {
-      newErrors.password = 'Password is required';
+      newErrors.password = "Password is required";
       isValid = false;
     } else if (formData.password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters';
+      newErrors.password = "Password must be at least 6 characters";
       isValid = false;
     }
 
     if (!isLogin && formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = 'Passwords do not match';
+      newErrors.confirmPassword = "Passwords do not match";
       isValid = false;
     }
 
@@ -61,50 +72,66 @@ export default function AuthPage() {
     return isValid;
   };
 
-  const handleSubmit = (e) => {
+  const handleAuth = async (e) => {
     e.preventDefault();
     if (validateForm()) {
-      // Here you would typically send the form data to your backend
-      console.log('Form submitted:', formData);
+      try {
+        const authFunction = isLogin ? login : signup;
+        const response = await authFunction(formData);
+        console.log(response);
+        if(isLogin && response.status === 401){
+          showAlert("Invalid username or password", "error");
+        }
+        else if(!isLogin && response.status === 400){
+          showAlert("Username already exists", "error");
+        }
+        if(isLogin && response.status === 200){
+          const { access_token } = response.data;
+          localStorage.setItem("token", access_token);
+          navigate("/content-manager");
+        }
+      } catch (error) {
+        console.error(`${isLogin ? "Login" : "Signup"} failed:`, error);
+        showAlert("Something went wrong. Please try again.", "error");
+      }
     }
   };
 
   return (
     <Box
       sx={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        minHeight: '100vh',
-        bgcolor: 'background.default',
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        minHeight: "100vh",
+        bgcolor: "background.default",
       }}
     >
-      <Card sx={{ maxWidth: 400, width: '100%' }}>
+      <Card sx={{ maxWidth: 400, width: "100%" }}>
         <CardHeader
-          title={isLogin ? 'Login' : 'Sign Up'}
+          title={isLogin ? "Login" : "Sign Up"}
           subheader={
             isLogin
-              ? 'Enter your credentials to access your account'
-              : 'Create an account to get started'
+              ? "Enter your credentials to access your account"
+              : "Create an account to get started"
           }
         />
         <CardContent>
-          <form onSubmit={handleSubmit}>
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <form onSubmit={handleAuth}>
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
               <TextField
-                label="Email"
-                name="email"
-                type="email"
+                label="Username"
+                name="username"
                 fullWidth
-                value={formData.email}
+                value={formData.username}
                 onChange={handleInputChange}
-                error={!!errors.email}
-                helperText={errors.email}
+                error={!!errors.username}
+                helperText={errors.username}
               />
               <TextField
                 label="Password"
                 name="password"
-                type={showPassword ? 'text' : 'password'}
+                type={showPassword ? "text" : "password"}
                 fullWidth
                 value={formData.password}
                 onChange={handleInputChange}
@@ -136,23 +163,33 @@ export default function AuthPage() {
                 />
               )}
               <Button type="submit" variant="contained" fullWidth>
-                {isLogin ? 'Login' : 'Sign Up'}
+                {isLogin ? "Login" : "Sign Up"}
               </Button>
             </Box>
           </form>
         </CardContent>
-        <Box sx={{ p: 2, textAlign: 'center' }}>
+        <Box sx={{ p: 2, textAlign: "center" }}>
           <Typography variant="body2">
-            {isLogin ? "Don't have an account? " : 'Already have an account? '}
+            {isLogin ? "Don't have an account? " : "Already have an account? "}
             <Button
               onClick={() => setIsLogin(!isLogin)}
               sx={{ p: 0, minWidth: 0 }}
             >
-              {isLogin ? 'Sign up' : 'Login'}
+              {isLogin ? "Sign up" : "Login"}
             </Button>
           </Typography>
         </Box>
       </Card>
+      {alert && (
+        <div className="alert-container">
+          <Alert
+            message={alert.message}
+            severity={alert.severity}
+            duration={3000}
+            onClose={closeAlert}
+          />
+        </div>
+      )}
     </Box>
   );
 }
