@@ -23,13 +23,16 @@ function NavBar() {
   const navigate = useNavigate();
 
   const handleLogout = () => {
+    localStorage.removeItem('token');
     navigate('/login');
   };
 
   const handleOpenNavMenu = (event) => {
+    localStorage.removeItem('token');
     navigate('/login');
   };
   const handleOpenUserMenu = (event) => {
+    localStorage.removeItem('token');
     navigate('/login');
   };
 
