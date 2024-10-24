@@ -87,7 +87,14 @@ export default function AuthPage() {
         }
         if(isLogin && response.status === 200){
           const { access_token } = response.data;
+          console.log("login success");
           localStorage.setItem("token", access_token);
+          navigate("/content-manager");
+        }
+        else if(!isLogin && response.status === 200){
+          const { access_token } = response.data;
+          localStorage.setItem("token", access_token);
+          console.log("signup success");
           navigate("/content-manager");
         }
       } catch (error) {

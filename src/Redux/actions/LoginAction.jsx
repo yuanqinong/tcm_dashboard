@@ -11,7 +11,7 @@ const api = axios.create({
 
 export const login = async (formData) => {
   try {
-    const response = await api.post("/api/loginPage/login", {
+    const response = await api.post("/api/loginPage/login/admins", {
       username: formData.username,
       password: formData.password,
     });
@@ -24,7 +24,7 @@ export const login = async (formData) => {
 
 export const signup = async (formData) => {
   try {
-    const response = await api.post("/api/loginPage/signup", {
+    const response = await api.post("/api/loginPage/signup/admins", {
       username: formData.username,
       password: formData.password,
     });

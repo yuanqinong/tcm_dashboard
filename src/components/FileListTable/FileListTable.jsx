@@ -15,11 +15,7 @@ import LoadingButton from "@mui/lab/LoadingButton";
 import Alert from "../AlertComponent/alert";
 import CloudDoneIcon from "@mui/icons-material/CloudDone";
 import CloudOffIcon from "@mui/icons-material/CloudOff";
-import DownloadIcon from "@mui/icons-material/Download";
 import Typography from "@mui/material/Typography";
-import IconButton from "@mui/material/IconButton";
-import DeleteIcon from "@mui/icons-material/Delete";
-import PageviewIcon from '@mui/icons-material/Pageview';
 import Confirmation from "../Confirmation/Confirmation";
 import "./FileListTable.css";
 
@@ -35,7 +31,14 @@ function FileList({ refreshTrigger }) {
   const [selectedItems, setSelectedItems] = useState({ files: [], links: [] });
 
   useEffect(() => {
-    fetchUploaded();
+    const token = localStorage.getItem('token');
+    if (token){
+      fetchUploaded();
+    }
+    else{
+      showAlert("Please login to continue", "error");
+      navigate('/login');
+    }
   }, [refreshTrigger]);
 
   useEffect(() => {

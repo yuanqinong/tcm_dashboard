@@ -2,19 +2,23 @@ import axios from 'axios';
 
 const API_BASE_URL = 'http://localhost:8000'; // Replace with your actual API base URL
 
-const api = axios.create({
-  baseURL: API_BASE_URL,
-  headers: {
-    'Content-Type': 'application/json',
-    'Authorization': `Bearer ${localStorage.getItem('token')}`
-  }
-});
+const getApi = () => {
+  const token = localStorage.getItem('token');
+  return axios.create({
+    baseURL: API_BASE_URL,
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': token ? `Bearer ${token}` : ''
+    }
+  });
+};
 
 export const uploadFiles = async (files) => {
   const formData = new FormData();
   files.forEach(file => formData.append('files', file));
 
   try {
+    const api = getApi();
     const response = await api.post('/api/dashboard/upload_files', formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
@@ -30,6 +34,7 @@ export const uploadFiles = async (files) => {
 
 export const uploadLinks = async (links) => {
   try {
+    const api = getApi();
     const response = await api.post('/api/dashboard/upload_links', links);
     return response.data;
   } catch (error) {
@@ -40,6 +45,7 @@ export const uploadLinks = async (links) => {
 
 export const getUploadedFiles = async () => {
   try {
+    const api = getApi();
     const response = await api.get('/api/dashboard/files');
     return response.data;
   } catch (error) {
@@ -50,6 +56,7 @@ export const getUploadedFiles = async () => {
 
 export const getUploadedLinks = async () => {
   try {
+    const api = getApi();
     const response = await api.get('/api/dashboard/links');
     return response.data;
   } catch (error) {
@@ -60,6 +67,7 @@ export const getUploadedLinks = async () => {
 
 export const downloadFiles = async (fileIds) => {
   try {
+    const api = getApi();
     const response = await api.post(`/api/dashboard/download_files`, fileIds, {
       responseType: 'blob'
     });
@@ -75,6 +83,7 @@ export const downloadFiles = async (fileIds) => {
 
 export const deleteFiles = async (fileIds) => {
   try {
+    const api = getApi();
     const response = await api.delete('/api/dashboard/delete_file', { 
       data: fileIds  
     });
@@ -87,6 +96,7 @@ export const deleteFiles = async (fileIds) => {
 
 export const syncKnowledgeBase = async () => {
   try {
+    const api = getApi();
     const response = await api.post('/api/dashboard/sync_knowledge_base');
     return response;
   } catch (error) {
@@ -97,6 +107,7 @@ export const syncKnowledgeBase = async () => {
 
 export const deleteSelectedEmbedding = async (ids) => {
   try {
+    const api = getApi();
     const response = await api.delete('/api/dashboard/delete_embeddings', { 
       data: ids  
     });
@@ -109,6 +120,7 @@ export const deleteSelectedEmbedding = async (ids) => {
 
 export const getUnprocessedFilesCount = async () => {
   try {
+    const api = getApi();
     const response = await api.get('/api/dashboard/unprocessed_files');
     return response.data;
   } catch (error) {
@@ -119,6 +131,7 @@ export const getUnprocessedFilesCount = async () => {
 
 export const deleteLinks = async (linkIds) => {
   try {
+    const api = getApi();
     const response = await api.delete('/api/dashboard/delete_links', { 
       data: linkIds  
     });
@@ -131,6 +144,7 @@ export const deleteLinks = async (linkIds) => {
 
 export const getUrlWithId = async (ids) => {
   try {
+    const api = getApi();
     const response = await api.post('/api/dashboard/url_with_id/', { ids });
     return response.data;
   } catch (error) {
