@@ -6,6 +6,7 @@ import LinkUpload from "../../components/LinkUpload/LinkUpload";
 import { useNavigate } from "react-router-dom";
 import Alert from "../../components/AlertComponent/alert";
 import { getUploadedFiles, getUploadedLinks } from "../../Redux/actions/ContentManagerAction";
+import SessionLogout from "../../components/SessionLogout/SessionLogout";
 
 function ContentManager() {
   const [uploadedFiles, setUploadedFiles] = useState([]);
@@ -62,6 +63,7 @@ function ContentManager() {
       <FileUpload onUploadComplete={handleUploadComplete} />
       <LinkUpload onUploadComplete={handleUploadComplete} />
       <FileList refreshTrigger={uploadedFiles || uploadedLinks} />
+      <SessionLogout />
       {alert && (
       <div className="alert-container">
         <Alert

@@ -4,13 +4,27 @@ const API_BASE_URL = 'http://localhost:8000'; // Replace with your actual API ba
 
 const getApi = () => {
   const token = localStorage.getItem('token');
-  return axios.create({
+  const api = axios.create({
     baseURL: API_BASE_URL,
     headers: {
       'Content-Type': 'application/json',
       'Authorization': token ? `Bearer ${token}` : ''
     }
   });
+
+  // Add response interceptor to handle 401 errors
+  api.interceptors.response.use(
+    (response) => response,
+    (error) => {
+      if (error.response?.status === 401) {
+        // Dispatch a custom event when 401 is received
+        window.dispatchEvent(new CustomEvent('sessionExpired'));
+      }
+      return Promise.reject(error);
+    }
+  );
+
+  return api;
 };
 
 export const uploadFiles = async (files) => {
