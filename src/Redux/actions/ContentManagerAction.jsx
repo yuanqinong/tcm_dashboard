@@ -3,13 +3,12 @@ import axios from 'axios';
 const API_BASE_URL = 'http://localhost:8000'; // Replace with your actual API base URL
 
 const getApi = () => {
-  const token = localStorage.getItem('token');
   const api = axios.create({
     baseURL: API_BASE_URL,
     headers: {
-      'Content-Type': 'application/json',
-      'Authorization': token ? `Bearer ${token}` : ''
-    }
+      'Content-Type': 'application/json'
+    },
+    withCredentials: true  // Enable cookie handling globally
   });
 
   // Add response interceptor to handle 401 errors
@@ -17,7 +16,6 @@ const getApi = () => {
     (response) => response,
     (error) => {
       if (error.response?.status === 401) {
-        // Dispatch a custom event when 401 is received
         window.dispatchEvent(new CustomEvent('sessionExpired'));
       }
       return Promise.reject(error);

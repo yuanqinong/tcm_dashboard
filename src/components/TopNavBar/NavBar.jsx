@@ -13,35 +13,85 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import { useNavigate } from 'react-router-dom';
+import { logout } from '../../Redux/actions/LoginAction';
 
 const pages = [''];
 const settings = ['Logout'];
+
 
 function NavBar() {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    navigate('/login');
+  const handleLogout = async () => {
+    try {
+      // Call logout endpoint to clear the cookie
+      const response = await logout();
+        if (response.status === 200) {  
+        navigate('/login');
+      }
+      } catch (error) {
+      console.error('Logout failed:', error);
+      // Navigate to login anyway since we want to exit the session
+      navigate('/login');
+    }
   };
 
-  const handleOpenNavMenu = (event) => {
-    localStorage.removeItem('token');
-    navigate('/login');
-  };
-  const handleOpenUserMenu = (event) => {
-    localStorage.removeItem('token');
-    navigate('/login');
+  const handleOpenNavMenu = async (event) => {
+    try {
+      // Call logout endpoint to clear the cookie
+      const response = await logout();
+        if (response.status === 200) {  
+        navigate('/login');
+      }
+      } catch (error) {
+      console.error('Logout failed:', error);
+      // Navigate to login anyway since we want to exit the session
+      navigate('/login');
+    }
   };
 
-  const handleCloseNavMenu = () => {
-    navigate('/login');
+  const handleOpenUserMenu = async (event) => {
+    try {
+      // Call logout endpoint to clear the cookie
+      const response = await logout();
+        if (response.status === 200) {  
+        navigate('/login');
+      }
+      } catch (error) {
+      console.error('Logout failed:', error);
+      // Navigate to login anyway since we want to exit the session
+      navigate('/login');
+    };
   };
 
-  const handleCloseUserMenu = () => {
-    navigate('/login');
+  const handleCloseNavMenu = async () => {
+    try {
+      // Call logout endpoint to clear the cookie
+      const response = await logout();
+        if (response.status === 200) {  
+        navigate('/login');
+      }
+      } catch (error) {
+      console.error('Logout failed:', error);
+      // Navigate to login anyway since we want to exit the session
+      navigate('/login');
+    }
+  };
+
+  const handleCloseUserMenu = async () => {
+    try {
+      // Call logout endpoint to clear the cookie
+      const response = await logout();
+        if (response.status === 200) {  
+        navigate('/login');
+      }
+      } catch (error) {
+      console.error('Logout failed:', error);
+      // Navigate to login anyway since we want to exit the session
+      navigate('/login');
+    }
   };
 
   return (

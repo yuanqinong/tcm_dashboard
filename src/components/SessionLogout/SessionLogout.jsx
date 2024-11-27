@@ -6,6 +6,7 @@ import DialogContent from '@mui/material/DialogContent'
 import DialogContentText from '@mui/material/DialogContentText'
 import DialogTitle from '@mui/material/DialogTitle'
 import Button from '@mui/material/Button'
+import { logout } from '../../Redux/actions/LoginAction';
 
 export default function SessionLogout() {
   const [open, setOpen] = useState(false)
@@ -24,10 +25,19 @@ export default function SessionLogout() {
     };
   }, []);
 
-  const handleClose = () => {
-    localStorage.removeItem('token'); // Clear the token
-    setOpen(false);
-    navigate('/login');
+  const handleClose = async () => {
+    try {
+      // Call logout endpoint to clear the cookie
+      const response = await logout();
+        if (response.status === 200) {  
+        setOpen(false);
+        navigate('/login');
+      }
+      } catch (error) {
+      console.error('Logout failed:', error);
+      // Navigate to login anyway since we want to exit the session
+      navigate('/login');
+    }
   };
 
   return (

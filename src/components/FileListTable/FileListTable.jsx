@@ -31,14 +31,20 @@ function FileList({ refreshTrigger }) {
   const [selectedItems, setSelectedItems] = useState({ files: [], links: [] });
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token){
-      fetchUploaded();
-    }
-    else{
-      showAlert("Please login to continue", "error");
-      navigate('/login');
-    }
+    const fetchData = async () => {
+      try {
+        await fetchUploaded();
+      } catch (error) {
+        if (error.response?.status === 401) {
+          showAlert("Please login to continue", "error");
+          navigate('/login');
+        } else {
+          showAlert("Error fetching files", "error");
+        }
+      }
+    };
+
+    fetchData();
   }, [refreshTrigger]);
 
   useEffect(() => {

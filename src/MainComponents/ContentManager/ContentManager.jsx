@@ -11,28 +11,12 @@ import SessionLogout from "../../components/SessionLogout/SessionLogout";
 function ContentManager() {
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [uploadedLinks, setUploadedLinks] = useState([]);
-  const [isTokenAvailable, setIsTokenAvailable] = useState(false);
   const [alert, setAlert] = useState(null);
-  const navigate = useNavigate();
-  
-  const showAlert = (message, severity) => {
-    setAlert({ message, severity});
-  };
 
-  const closeAlert = () => {
-    setAlert(null);
-  };
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    setIsTokenAvailable(!!token);
+    fetchUploadedFiles();
+    fetchUploadedLinks();
   }, []);
-
-  useEffect(() => {
-    if (isTokenAvailable) {
-      fetchUploadedFiles();
-      fetchUploadedLinks();
-    }
-  }, [isTokenAvailable]);
 
   const fetchUploadedFiles = async () => {
     try {
@@ -64,15 +48,6 @@ function ContentManager() {
       <LinkUpload onUploadComplete={handleUploadComplete} />
       <FileList refreshTrigger={uploadedFiles || uploadedLinks} />
       <SessionLogout />
-      {alert && (
-      <div className="alert-container">
-        <Alert
-          message={alert.message}
-          severity={alert.severity}
-          onClose={() => {closeAlert()}}
-        />
-        </div>
-      )}
     </div>
   );
 }

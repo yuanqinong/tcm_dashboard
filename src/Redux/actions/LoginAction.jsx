@@ -7,6 +7,7 @@ const api = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
+  withCredentials: true,
 });
 
 export const login = async (formData) => {
@@ -34,3 +35,24 @@ export const signup = async (formData) => {
     return error;
   }
 };
+
+export const logout = async () => {
+  try {
+    const response = await api.post("/api/loginPage/logout");
+    return response;
+  } catch (error) {
+    console.error("Logout failed:", error);
+    return error;
+  }
+}
+
+export const verify = async () => {
+  try {
+    const response = await api.get("/auth/verify");
+    return response;
+  } catch (error) {
+    console.error("Verification failed:", error);
+    return error;
+  }
+}
+
