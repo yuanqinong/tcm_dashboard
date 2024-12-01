@@ -106,10 +106,12 @@ export const deleteFiles = async (fileIds) => {
   }
 };
 
-export const syncKnowledgeBase = async () => {
+export const syncKnowledgeBase = async ({ enableOCR }) => {
   try {
     const api = getApi();
-    const response = await api.post('/api/dashboard/sync_knowledge_base');
+    const response = await api.post('/api/dashboard/sync_knowledge_base', {
+      enable_ocr: enableOCR
+    });
     return response;
   } catch (error) {
     console.error('Failed to sync database:', error);

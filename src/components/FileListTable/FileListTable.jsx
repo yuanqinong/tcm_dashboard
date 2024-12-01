@@ -10,13 +10,17 @@ import {
   getUrlWithId,
 } from "../../Redux/actions/ContentManagerAction";
 import { DataGrid } from "@mui/x-data-grid";
-import { Paper, Button, Stack } from "@mui/material";
+import { Paper, Button, Stack, Box } from "@mui/material";
 import LoadingButton from "@mui/lab/LoadingButton";
 import Alert from "../AlertComponent/alert";
 import CloudDoneIcon from "@mui/icons-material/CloudDone";
 import CloudOffIcon from "@mui/icons-material/CloudOff";
 import Typography from "@mui/material/Typography";
 import Confirmation from "../Confirmation/Confirmation";
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Switch from '@mui/material/Switch';
+import Tooltip from '@mui/material/Tooltip';
+import InfoIcon from '@mui/icons-material/Info';
 import "./FileListTable.css";
 
 function FileList({ refreshTrigger }) {
@@ -29,6 +33,7 @@ function FileList({ refreshTrigger }) {
   const [confirmationOpen, setConfirmationOpen] = useState(false);
   const [confirmationMessage, setConfirmationMessage] = useState("");
   const [selectedItems, setSelectedItems] = useState({ files: [], links: [] });
+  const [enableOCR, setEnableOCR] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -268,7 +273,7 @@ function FileList({ refreshTrigger }) {
   const handleSync = async () => {
     try {
       setSyncStatus(true);
-      const response = await syncKnowledgeBase();
+      const response = await syncKnowledgeBase({ enableOCR });
       if (response.data.message) {
         showAlert(response.data.message, "success");
       } else {
@@ -330,7 +335,22 @@ function FileList({ refreshTrigger }) {
           )}
         </div>
         <div className="file-list-button-container">
-          <Stack direction="row" spacing={2}>
+          <Stack direction="row" spacing={2} alignItems="center">
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Tooltip title="When enabled, the system will analyze images within documents for text content. This may increase processing time. Now only supports PDF and DOCX files." placement="top">
+                  <InfoIcon color="action" sx={{ fontSize: 20 }} />
+                </Tooltip>
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={enableOCR}
+                    onChange={(e) => setEnableOCR(e.target.checked)}
+                    name="enableOCR"
+                  />
+                }
+                label="Image OCR"
+              />
+            </Box>
             <LoadingButton
               variant="contained"
               onClick={handleSync}
