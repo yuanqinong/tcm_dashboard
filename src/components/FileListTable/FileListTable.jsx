@@ -52,14 +52,10 @@ function FileList({ refreshTrigger }) {
     fetchData();
   }, [refreshTrigger]);
 
-  useEffect(() => {
-    console.log(selectedItems);
-  }, [selectedItems]);
 
   useEffect(() => {
     const processedData = preprocessData(uploadedData);
     setProcessedData(processedData);
-    console.log(processedData);
   }, [uploadedData]);
 
   const showAlert = (message, severity) => {
@@ -110,7 +106,6 @@ function FileList({ refreshTrigger }) {
       const files = await getUploadedFiles();
       const links = await getUploadedLinks(); // You'll need to implement this function
       const combinedData = [...files, ...links];
-      console.log("combinedData",combinedData);
       setUploaded(combinedData);
     } catch (error) {
       console.error("Failed to fetch uploaded files and links:", error);

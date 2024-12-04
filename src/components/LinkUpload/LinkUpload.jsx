@@ -91,10 +91,6 @@ const LinkUpload = ({onUploadComplete}) => {
     setInputUrl("");
   };
 
-  useEffect(() => {
-    console.log(links);
-  }, [links]);
-
   return (
     <Box sx={{marginLeft: 3, marginBottom: 5, marginRight: 3}}>
       <Box >

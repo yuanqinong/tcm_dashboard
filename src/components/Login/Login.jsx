@@ -80,7 +80,6 @@ export default function AuthPage() {
         const response = await authFunction(formData);
 
         if (response.status === 200) {
-          console.log(`${isLogin ? "Login" : "Signup"} success`);
           navigate("/content-manager");
         }
       } catch (error) {

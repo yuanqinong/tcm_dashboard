@@ -36,7 +36,6 @@ export const uploadFiles = async (files) => {
         'Content-Type': 'multipart/form-data'
       }
     });
-    console.log(response.data);
     return response.data;
   } catch (error) {
     console.error('Upload failed:', error);
@@ -83,7 +82,6 @@ export const downloadFiles = async (fileIds) => {
     const response = await api.post(`/api/dashboard/download_files`, fileIds, {
       responseType: 'blob'
     });
-    console.log("header",response.headers);
     const contentDisposition = response.headers.get('content-disposition');
     const blob = response.data;
     return { blob, contentDisposition };
