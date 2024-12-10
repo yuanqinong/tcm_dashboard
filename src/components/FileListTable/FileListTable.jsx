@@ -7,7 +7,7 @@ import {
   syncKnowledgeBase,
   deleteSelectedEmbedding,
   deleteLinks,
-  getUrlWithId,
+  checkActiveSyncSession,
 } from "../../Redux/actions/ContentManagerAction";
 import { DataGrid } from "@mui/x-data-grid";
 import { Paper, Button, Stack, Box } from "@mui/material";
@@ -22,6 +22,7 @@ import Switch from '@mui/material/Switch';
 import Tooltip from '@mui/material/Tooltip';
 import InfoIcon from '@mui/icons-material/Info';
 import "./FileListTable.css";
+import SyncStatusDialog from '../SyncStatusDialog/SyncStatusDialog';
 
 function FileList({ refreshTrigger }) {
   const [uploadedData, setUploaded] = useState([]);
@@ -34,6 +35,7 @@ function FileList({ refreshTrigger }) {
   const [confirmationMessage, setConfirmationMessage] = useState("");
   const [selectedItems, setSelectedItems] = useState({ files: [], links: [] });
   const [enableOCR, setEnableOCR] = useState(false);
+  const [syncStatusOpen, setSyncStatusOpen] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -52,6 +54,20 @@ function FileList({ refreshTrigger }) {
     fetchData();
   }, [refreshTrigger]);
 
+  useEffect(() => {
+    const checkInitialSyncStatus = async () => {
+      try {
+        const activeSyncSession = await checkActiveSyncSession();
+        if (Array.isArray(activeSyncSession) && activeSyncSession.length > 0) {
+          setSyncStatus(true);
+        }
+      } catch (error) {
+        console.error("Failed to check initial sync status:", error);
+      }
+    };
+
+    checkInitialSyncStatus();
+  }, []);
 
   useEffect(() => {
     const processedData = preprocessData(uploadedData);
@@ -267,18 +283,28 @@ function FileList({ refreshTrigger }) {
 
   const handleSync = async () => {
     try {
-      setSyncStatus(true);
-      const response = await syncKnowledgeBase({ enableOCR });
-      if (response.data.message) {
-        showAlert(response.data.message, "success");
+      const activeSyncSession = await checkActiveSyncSession();
+      console.log(activeSyncSession);
+      // Check if the response is an empty array or has no active sessions
+      if (Array.isArray(activeSyncSession) && activeSyncSession.length === 0) {
+        setSyncStatus(true);
+        const response = await syncKnowledgeBase({ enableOCR });
+        if (response.data.message) {
+          showAlert(response.data.message, "success");
+        } else {
+          showAlert(response.data.error, "error");
+        }
       } else {
-        showAlert(response.data.error, "error");
+        showAlert("An active sync session is already running. Please wait for it to complete before starting a new sync.", "error");
+        return;
       }
     } catch (error) {
+      console.error("Sync error:", error);
       showAlert("Failed to sync knowledge base", "error");
+    } finally {
+      setSyncStatus(false);
+      fetchUploaded();
     }
-    setSyncStatus(false);
-    fetchUploaded();
   };
 
   const handleBatchPreview = async () => {
@@ -354,7 +380,10 @@ function FileList({ refreshTrigger }) {
             >
               Sync Knowledge Base
             </LoadingButton>
-            <Button variant="outlined" onClick={() => {}} disabled>
+            <Button 
+              variant="outlined" 
+              onClick={() => setSyncStatusOpen(true)}
+            >
               Check Sync Status
             </Button>
           </Stack>
@@ -408,6 +437,11 @@ function FileList({ refreshTrigger }) {
           />
         </div>
       )}
+      <SyncStatusDialog
+        open={syncStatusOpen}
+        onClose={() => setSyncStatusOpen(false)}
+        showAlert={showAlert}
+      />
     </div>
   );
 }
