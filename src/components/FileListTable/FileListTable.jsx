@@ -284,7 +284,6 @@ function FileList({ refreshTrigger }) {
   const handleSync = async () => {
     try {
       const activeSyncSession = await checkActiveSyncSession();
-      console.log(activeSyncSession);
       // Check if the response is an empty array or has no active sessions
       if (Array.isArray(activeSyncSession) && activeSyncSession.length === 0) {
         setSyncStatus(true);

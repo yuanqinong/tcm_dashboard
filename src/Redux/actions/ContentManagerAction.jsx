@@ -180,7 +180,6 @@ export const getSyncStatus = async () => {
   try {
     const api = getApi();
     const response = await api.get('/api/dashboard/latest_sync_status');
-    console.log("latest_sync_status", response);
     return response.data;
   } catch (error) {
     console.error('Failed to get sync status:', error);

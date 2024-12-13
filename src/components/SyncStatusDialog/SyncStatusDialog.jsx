@@ -125,7 +125,7 @@ const SyncStatusDialog = ({ open, onClose, showAlert }) => {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>File Name</TableCell>
+                <TableCell>Item Name</TableCell>
                 <TableCell>Status</TableCell>
                 <TableCell>Start Time</TableCell>
                 <TableCell>End Time</TableCell>
