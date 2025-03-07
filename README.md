@@ -1,8 +1,33 @@
-# React + Vite
+# Smart Chatbot with Knowledge Base
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+TCM is a comprehensive knowledge base and chatbot platform that allows users to upload documentation and retrieve relevant information through an AI-powered chatbot. The system utilizes pgvector for vector-based document storage with PGVector, MongoDB for chat history, and a FastAPI backend integrated with LangChain for intelligent responses.
 
-Currently, two official plugins are available:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Full Repo Links
+
+ - [Chatbot](https://github.com/yuanqinong/tcm-chatbot)
+ - [Backend](https://github.com/yuanqinong/tcm_backend )
+ - [Knowledge Base Management Dashboard](https://github.com/yuanqinong/tcm_dashboard)
+
+
+## Features
+
+- 📁 Document Upload Dashboard - Supports batch uploads (PDF, DOCX, EXCEL, TXT, URLs) for knowledge base.
+- 🔎 AI-Powered Chatbot - Retrieves and summarizes answers using a vector search mechanism.
+- 🧠 LangChain Integration - Tool calling, RAG (Retrieval-Augmented Generation), and function-based interactions.
+- 🗃️ Vector Database (pgvector) - Efficient document retrieval using embeddings.
+- 🛡️ Secure Authentication (JWT) - Session management for user authentication.
+- 📊 Real-time Syncing – Ensures up-to-date knowledge base data.
+
+
+## Tech Stack
+
+**Frontend:** React, Material UI
+
+**Server:** FastAPI
+
+**Database:** MongoDB, Postgresql (PGCector)
+
+**LLM Model:** LLama3.1, LLama Vision
+
+**Deployment:** Docker
