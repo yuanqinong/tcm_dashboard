@@ -9,6 +9,9 @@ TCM is a comprehensive knowledge base and chatbot platform that allows users to 
  - [Backend](https://github.com/yuanqinong/tcm_backend )
  - [Knowledge Base Management Dashboard](https://github.com/yuanqinong/tcm_dashboard)
 
+## Demo
+
+![Untitled design](https://github.com/user-attachments/assets/11059e61-96d5-4150-ba19-54eead2cdce9)
 
 ## Features
 
@@ -31,3 +34,4 @@ TCM is a comprehensive knowledge base and chatbot platform that allows users to 
 **LLM Model:** LLama3.1, LLama Vision
 
 **Deployment:** Docker
+
