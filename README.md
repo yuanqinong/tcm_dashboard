@@ -11,7 +11,7 @@ TCM is a comprehensive knowledge base and chatbot platform that allows users to 
 
 ## Demo
 
-![Untitled design](https://github.com/user-attachments/assets/11059e61-96d5-4150-ba19-54eead2cdce9)
+![demo](https://github.com/user-attachments/assets/11059e61-96d5-4150-ba19-54eead2cdce9)
 
 ## Features
 
